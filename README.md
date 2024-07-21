@@ -42,3 +42,58 @@ Ideally supporting android's file system, Google Drive, Microsoft OneDrive, Drop
 Automate the pattern recognition part of reporting to aid prioritisation.  
 
 
+
+
+
+# Development environment setup
+
+This section is here just because I have a memory like a sieve and am likely to need to redo these steps.
+
+For Windows simply follow [Microsoft installation guide](https://learn.microsoft.com/en-us/dotnet/maui/get-started/installation?view=net-maui-8.0&tabs=visual-studio-code#android)  
+
+For Debian I mostly followed [Installing Maui on Linux](https://techcommunity.microsoft.com/t5/educator-developer-blog/net-maui-on-linux-with-visual-studio-code/ba-p/3982195), but I'd rather keep my own notes in case I skip steps or the blog disappears.  
+
+Starting point - .NET8 already installed, along with VS Code, C# & C# DevKit extensions.  
+Steps:
+
+Install .NET maui workload:
+`dotnet workload install maui-android`
+
+Add .NET Maui VS Code extension - will complain about missing JDK & Android.
+Can check status using `Ctrl + P` then `> .NET Maui configure android` & refresh android status.
+
+Install OpenJDK following [Microsoft instructions](https://learn.microsoft.com/en-us/java/openjdk/install#debian-10---12):
+```bash
+sudo apt update
+sudo apt install wget lsb-release -y
+wget https://packages.microsoft.com/config/debian/$(lsb_release -rs)/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+sudo dpkg -i packages-microsoft-prod.deb
+
+sudo apt update
+sudo apt install msopenjdk-17
+```
+
+Using snap for installation of Android studio for simplicity
+```bash
+sudo apt install snapd
+sudo snap install android-studio --classic
+snap run android-studio
+```
+
+using either environment variables, VS Code settings or VS Code .NET Maui commands
+Set Android SDK Path `export ANDROID_HOME=$HOME/Android/Sdk` to avoid build errors (aapt command).  
+Set Java SDK Path `/usr/bin`
+
+recheck android status - `Ctrl + P > .NET Maui configure android` & refresh android status.  
+Use Android Studio to add any missing components it complains about.  
+I didn't bother with the optional dependencies.
+
+We can now build `dotnet build`.  
+But not run, `dotnet build -t:Run -f net8.0-android` fails to find an available device.
+
+From a real android phone with developer settings enabled, enable wireless debugging and click in to see connection details.  
+From the dev machine go to `~/Android/Sdk/platform-tools/` and run:
+`./adb pair`, using the port for pairing provided by the phone.  
+`./adb connect`, using the primary port provided by the phone.  
+
+Re-run the application `dotnet build -t:Run -f net8.0-android` and test using the phone.
