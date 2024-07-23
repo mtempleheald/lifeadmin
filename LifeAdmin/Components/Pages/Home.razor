@@ -1,5 +1,24 @@
 ﻿@page "/"
+@using LifeAdmin.ComponentModels
+
+@code {
+}
 
 <h1>Hello, world!</h1>
 
-Welcome to your new app.
+<span>TODO: Make the dynamic hide/show logic work using a shared stata solution</span>
+
+<InputComponent Model=@(new InputComponentModel()
+    {
+        Key = "key1",
+        Label = "Label One",
+        HelpText = "Set me to SHOW to show the next component"
+    })></InputComponent>
+
+
+<InputComponent Model=@(new InputComponentModel()
+    {
+        Key = "key2",
+        Label = "Label Two",
+        HelpText = "Shown because key1 is set to SHOW"
+    })></InputComponent>

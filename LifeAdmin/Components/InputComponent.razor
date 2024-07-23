@@ -1,0 +1,43 @@
+﻿@using LifeAdmin.ComponentModels
+
+@code {
+    [Parameter]
+    public required InputComponentModel Model { get; set; }
+
+    private bool ShouldDisplay { 
+        get {
+            if (Model.DisplayConditions is null || Model.DisplayConditions.Count == 0)
+                return true; // unconditional, just show it
+            var display = false;
+            foreach (var condition in Model.DisplayConditions) {
+                // TODO: Dynamically access value from shared state
+                //       & return true if any are free
+                display = true;
+            }
+            return display;
+        } 
+    }
+}
+
+<div class="input">
+
+@if("TODO" != "Calculate whether to display myself based on the values of my siblings") {
+
+    <label for="@Model.Key">
+        @Model.Label
+    </label>
+    <input name="@Model.Key"
+        id="@Model.Key"
+        type="@Model.SubType"
+        placeholder="@Model.Placeholder"
+        value="@Model.Value"
+        required="@Model.Required"
+    />
+    <details>
+        <summary>Help</summary>
+        @Model.HelpText
+    </details>
+}
+
+</div>
+
