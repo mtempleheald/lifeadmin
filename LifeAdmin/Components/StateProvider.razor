@@ -1,0 +1,35 @@
+﻿@* @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage *@
+@* @inject ProtectedSessionStorage ProtectedSessionStore *@
+
+@if (isLoaded)
+{
+    <CascadingValue Value="this">
+        @ChildContent
+    </CascadingValue>
+}
+else
+{
+    <p>Loading...</p>
+}
+
+@code {
+    private bool isLoaded;
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    public Dictionary<string, object> State { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        @* var result = await ProtectedSessionStore.GetAsync<Dictionary<string,string>>("state"); *@
+        @* State = result.Success ? result.State : []; *@
+        State = [];
+        isLoaded = true;
+    }
+
+    public async Task SaveChangesAsync()
+    {
+        @* await ProtectedSessionStore.SetAsync("state", State); *@
+    }
+}
