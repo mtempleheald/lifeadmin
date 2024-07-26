@@ -6,6 +6,13 @@
 
     [CascadingParameter]
     private StateProvider? StateProvider { get; set; }
+    //private string? LogMessage { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        // Doesn't fire if State dictionary is updated by another component
+        //LogMessage = $"Parameters set {DateTime.Now}"; 
+    }
 
     private async Task Save(ChangeEventArgs args)
     {

@@ -84,6 +84,9 @@ using either environment variables, VS Code settings or VS Code .NET Maui comman
 Set Android SDK Path `export ANDROID_HOME=$HOME/Android/Sdk` to avoid build errors (aapt command).  
 Set Java SDK Path `/usr/bin`
 
+best added to profile to persist over restarts
+`cat ~/.profile` & `nano ~/.profile`
+
 recheck android status - `Ctrl + P > .NET Maui configure android` & refresh android status.  
 Use Android Studio to add any missing components it complains about.  
 I didn't bother with the optional dependencies.
