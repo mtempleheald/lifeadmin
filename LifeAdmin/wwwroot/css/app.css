@@ -84,3 +84,9 @@ h1:focus {
         padding-left: env(safe-area-inset-left);
     }
 }
+
+
+
+:root {
+    --input-border: 1px dotted grey;
+}

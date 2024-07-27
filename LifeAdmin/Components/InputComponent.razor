@@ -1,26 +1,26 @@
 ﻿@using LifeAdmin.ComponentModels
+@implements IDisposable
+@inject StateContainer StateContainer
 
 @code {
     [Parameter]
     public required InputComponentModel Model { get; set; }
 
-    [CascadingParameter]
-    private StateProvider? StateProvider { get; set; }
-    //private string? LogMessage { get; set; }
-
-    protected override void OnParametersSet()
+    protected override void OnInitialized()
     {
-        // Doesn't fire if State dictionary is updated by another component
-        //LogMessage = $"Parameters set {DateTime.Now}"; 
+        StateContainer.OnChange += StateHasChanged;
+    }
+    public void Dispose()
+    {
+        StateContainer.OnChange -= StateHasChanged;
     }
 
-    private async Task Save(ChangeEventArgs args)
+    private void Save(ChangeEventArgs args)
     {
-        if (StateProvider is not null)
-        {
-            StateProvider.State[Model.Key] = args.Value;
-            await StateProvider.SaveChangesAsync();
-        }
+        StateContainer.SaveState(new() {
+            Key = Model.Key!,
+            Value = args.Value
+        });
     }
 
     private bool ShouldDisplay { 
@@ -59,12 +59,14 @@
     </details>
 }
 
+<details>
+    <summary>State available to this component</summary>
+    <ul>
+    @foreach (var s in StateContainer.State ?? []) {
+
+        <li>@s.Key = @s.Value</li>
+    }
+    </ul>
+</details>
+
 </div>
-
-<span>State since I was rendered + my changes</span>
-<ul>
-@foreach (var s in StateProvider.State) {
-
-    <div>@s.Key = @s.Value</div>
-}
-</ul>
