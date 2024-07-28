@@ -1,4 +1,5 @@
 ﻿@using LifeAdmin.ComponentModels
+@using System.Text.RegularExpressions
 @implements IDisposable
 @inject StateContainer StateContainer
 
@@ -36,6 +37,29 @@
             return display;
         } 
     }
+
+    Regex rx = new Regex(@"({(?<token>\w+)})", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    public string? EffectiveLabel { 
+        get {
+            var label = Model.Label;
+            foreach (Match match in rx.Matches(Model.Label!))
+            {
+                var group = match.Groups["token"];
+                //foreach (Group group in match.Groups)
+                //{
+                foreach (Capture capture in match.Captures)
+                {
+                    //label += $"<br/>Match: {match.Value}, Group: {group.Value}, Capture: {capture.Value}";
+                    StateContainer.State.TryGetValue(group.Value, out var state);
+                    label = label.Replace(capture.Value, state?.ToString());
+                    }
+                //}
+            }
+            return label;
+        } }
+
+}
+
 }
 
 <div class="input">
@@ -43,7 +67,7 @@
 @if("TODO" != "Calculate whether to display myself based on the values of my siblings") {
 
     <label for="@Model.Key">
-        @Model.Label
+        @EffectiveLabel            
     </label>
     <input name="@Model.Key"
         id="@Model.Key"
