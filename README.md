@@ -95,9 +95,9 @@ We can now build `dotnet build`.
 But not run, `dotnet build -t:Run -f net8.0-android` fails to find an available device.
 
 From a real android phone with developer settings enabled, enable wireless debugging and click in to see connection details.  
-From the dev machine go to `~/Android/Sdk/platform-tools/` and run:
-`./adb pair`, using the port for pairing provided by the phone.  
-`./adb connect`, using the primary port provided by the phone.  
+From the dev machine with `~/Android/Sdk/platform-tools/` added to $PATH run:
+`adb pair`, using the port for pairing provided by the phone.  
+`adb connect`, using the primary port provided by the phone.  
 
 Re-run the application `dotnet build -t:Run -f net8.0-android` and test using the phone.
 
@@ -110,11 +110,13 @@ Re-run the application `dotnet build -t:Run -f net8.0-android` and test using th
 4. address breaking changes according to the [docs](https://learn.microsoft.com/en-us/dotnet/maui/whats-new/dotnet-9?view=net-maui-8.0#deprecated-apis)
 5. build & fix remaining warnings
 
-new commands, run from the solution root, with the android phone already set to wireless debugging mode:
+With `~/Android/Sdk/platform-tools/` added to $PATH to make `adb` available,
+and the android phone already set to wireless debugging mode,
+run the following commands from the solution root to push latest build to the phone:
 ```bash
-~/Android/Sdk/platform-tools/adb pair {ip}:{port} {pairing code}
+adb pair {ip}:{port} {pairing code}
 # successfully paired to {ip}:{port} [guid=adb-...]
-~/Android/Sdk/platform-tools/adb connect {ip}:{port}
+adb connect {ip}:{port}
 # connected to {ip}:{port}
 dotnet build -t:Run -f net9.0-android
 # Build succeeded in Xs

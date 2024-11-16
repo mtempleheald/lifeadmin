@@ -1,0 +1,62 @@
+@page "/Tasks"
+@using LifeAdmin.ComponentModels
+@using Microsoft.Extensions.Logging
+@inject ILogger<Tasks> Logger
+
+<h3>Tasks</h3>
+
+<EditForm Model="Model" OnValidSubmit="Submit" FormName="TaskCapture">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div>
+        <label>
+            Task description
+            <InputText @bind-Value="Model!.Description"></InputText>
+        </label>
+    </div>
+    <div>
+        <label>
+            Completion Date
+            <InputDate @bind-Value="Model!.CompletionDate" />
+        </label>
+    </div>
+    <div>
+        <button type="submit">Submit</button>
+    </div>
+</EditForm>
+
+<table>
+    <thead>
+    <tr>
+        <th>Description</th>
+        <th>Completed</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var task in TaskList)
+    {
+        <tr>
+            <td>@task.Description</td>
+            <td>@task.CompletionDate.ToShortDateString()</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@code {
+    [SupplyParameterFromForm]
+    private TaskDetailModel? Model { get; set; }
+
+    private List<TaskDetailModel> TaskList { get; set; } = [];
+    
+    protected override void OnInitialized() =>
+        Model ??= new() { CompletionDate = DateTime.UtcNow };
+
+    private void Submit()
+    {
+        Logger.LogInformation("Id = {Id} Description = {Description} CompletionDate = {CompletionDate}",
+            Model?.Id, Model?.Description, Model?.CompletionDate);
+        if (Model is not null)
+            TaskList.Add(Model);
+    }
+}
