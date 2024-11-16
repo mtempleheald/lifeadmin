@@ -18,7 +18,7 @@ else
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 
-    public Dictionary<string, object> State { get; set; }
+    public Dictionary<string, object> State { get; set; } = [];
 
     protected override async Task OnInitializedAsync()
     {

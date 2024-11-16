@@ -100,3 +100,24 @@ From the dev machine go to `~/Android/Sdk/platform-tools/` and run:
 `./adb connect`, using the primary port provided by the phone.  
 
 Re-run the application `dotnet build -t:Run -f net8.0-android` and test using the phone.
+
+# Upgrading to .NET9
+
+1. install .NET9
+2. install workload `sudo dotnet workload install maui-android`, this will update `MauiVersion` referenced in the next step.
+3. update csproj to set TargetFrameworks to `net9.0-x` instead of `net8.0-x`
+   I took a shortcut here to address workload issues, enabling only android target framework (priority)
+4. address breaking changes according to the [docs](https://learn.microsoft.com/en-us/dotnet/maui/whats-new/dotnet-9?view=net-maui-8.0#deprecated-apis)
+5. build & fix remaining warnings
+
+new commands, run from the solution root, with the android phone already set to wireless debugging mode:
+```bash
+~/Android/Sdk/platform-tools/adb pair {ip}:{port} {pairing code}
+# successfully paired to {ip}:{port} [guid=adb-...]
+~/Android/Sdk/platform-tools/adb connect {ip}:{port}
+# connected to {ip}:{port}
+dotnet build -t:Run -f net9.0-android
+# Build succeeded in Xs
+```
+
+The app should open automatically on the phone, ready for manual testing.
