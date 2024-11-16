@@ -1,0 +1,21 @@
+﻿@page "/state-demo"
+@using LifeAdmin.ComponentModels
+
+@code {
+}
+
+<h1>Dynamic state demonstration</h1>
+
+<span>TODO: Make the dynamic hide/show logic work using a shared state solution</span>
+
+@for (var i = 0; i < 100; i++)
+{
+    <InputComponent Model=@(new InputComponentModel()
+    {
+        Key = $"key_{i}",
+        //Label = i == 0 ? $"label {i}" : $"Label {i}, referencing {{key_{i-1}}}",
+        Label = Enumerable.Range(0,i).Select(i => i.ToString()).Aggregate($"Label {i}", (a, b) => $"{a}, {{key_{b}}}")
+        //HelpText = "Set me to SHOW to show the next component"
+    })></InputComponent>
+
+}
