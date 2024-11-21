@@ -123,3 +123,26 @@ dotnet build -t:Run -f net9.0-android
 ```
 
 The app should open automatically on the phone, ready for manual testing.
+
+
+
+
+# Debugging
+
+While the app is running and connected, with Android studio running, checked via `adb devices`, examine logs issued by the app:
+
+```bash
+# see all warnings + by application id
+adb logcat --pid=(adb shell pidof -s io.github.mtempleheald.lifeadmin) *:W -v time,brief,color
+# filter warnings to my code + ActivityManager, everything else is silent
+adb logcat --pid=$(adb shell pidof -s io.github.mtempleheald.lifeadmin) heald.lifeadmin:V ActivityManager:I *:S -v time,color
+# find log entries by specific pattern
+adb logcat -e mtempleheald
+```
+
+
+# Notes
+
+Logging is not provided by Maui directly, so nothing written by me shows in logcat, hence temporary addition of LogMessages variables.
+
+"SQLite-net is shipped as a NuGet package. You must add the sqlite-net-pcl package to your apps to use it. Use the NuGet package manager in Visual Studio. Additionally, if you want to run an app on Android, you must also add the SQLitePCLRaw.provider.dynamic_cdecl package." from [here](https://learn.microsoft.com/en-us/training/modules/store-local-data/3-store-data-locally-with-sqlite)

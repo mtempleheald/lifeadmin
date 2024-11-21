@@ -1,9 +1,12 @@
 using System.ComponentModel.DataAnnotations;
+using SQLite;
 
 namespace LifeAdmin.ComponentModels;
 
-public class TaskDetailModel
+[Table("Tasks")]
+public class TaskDetailEntity
 {
+    [PrimaryKey]
     public Guid Id { get; set; } = Guid.NewGuid();
     
     [Required]

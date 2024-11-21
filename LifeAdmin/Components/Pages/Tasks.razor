@@ -1,11 +1,13 @@
 @page "/Tasks"
 @using LifeAdmin.ComponentModels
+@using LifeAdmin.Persistence
 @using Microsoft.Extensions.Logging
 @inject ILogger<Tasks> Logger
+@inject LifeAdminDatabase Database;
 
 <h3>Tasks</h3>
 
-<EditForm Model="Model" OnValidSubmit="Submit" FormName="TaskCapture">
+<EditForm Model="Model" OnValidSubmit="SubmitAsync" FormName="TaskCapture">
     <DataAnnotationsValidator />
     <ValidationSummary />
     <div>
@@ -43,20 +45,51 @@
     </tbody>
 </table>
 
+<h4>Logging</h4>
+<span>@LogMessages</span>
+
 @code {
+    private string? LogMessages { get; set; }
+
     [SupplyParameterFromForm]
-    private TaskDetailModel? Model { get; set; }
+    private TaskDetailEntity? Model { get; set; }
 
-    private List<TaskDetailModel> TaskList { get; set; } = [];
+    private List<TaskDetailEntity> TaskList { get; set; } = [];
     
-    protected override void OnInitialized() =>
+    protected override async Task OnInitializedAsync()
+    {
         Model ??= new() { CompletionDate = DateTime.UtcNow };
+        try
+        {
+            TaskList = await Database.GetTasksAsync();
+            LogMessages += "Database queried\n";
+        }
+        catch (Exception ex)
+        {
+            LogMessages += $"{ex.Message} - {ex.InnerException?.Message}\n";
+            Logger.LogError(ex, "Unable to read from database");
+        }
+    }
 
-    private void Submit()
+    private async Task SubmitAsync()
     {
         Logger.LogInformation("Id = {Id} Description = {Description} CompletionDate = {CompletionDate}",
             Model?.Id, Model?.Description, Model?.CompletionDate);
         if (Model is not null)
+        {
             TaskList.Add(Model);
+            try
+            {
+                var affected = await Database.SaveItemAsync(Model);
+                Model = new() { CompletionDate = DateTime.UtcNow };
+                LogMessages += $"{affected} rows affected\n";
+                Logger.LogInformation("{UpsertCount} records affected", affected);
+            }
+            catch (Exception ex)
+            {
+                LogMessages += $"{ex.Message} - {ex.InnerException?.Message}\n";
+                Logger.LogError(ex, "Error writing to database");
+            }
+        }
     }
 }
