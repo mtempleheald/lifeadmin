@@ -32,7 +32,7 @@ public class LifeAdminDatabase(ILogger<LifeAdminDatabase> logger)
             .ToListAsync();
     }
 
-    public async Task<TaskDetailEntity> GetItemAsync(Guid id)
+    public async Task<TaskDetailEntity> GetItemAsync(int id)
     {
         await Init();
         return await _database.Table<TaskDetailEntity>()
@@ -43,7 +43,7 @@ public class LifeAdminDatabase(ILogger<LifeAdminDatabase> logger)
     public async Task<int> SaveItemAsync(TaskDetailEntity item)
     {
         await Init();
-        if (item.Id != Guid.Empty)
+        if (item.Id != 0)
             return await _database.UpdateAsync(item);
         else
             return await _database.InsertAsync(item);

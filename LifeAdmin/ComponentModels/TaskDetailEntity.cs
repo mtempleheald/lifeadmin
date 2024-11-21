@@ -6,8 +6,8 @@ namespace LifeAdmin.ComponentModels;
 [Table("Tasks")]
 public class TaskDetailEntity
 {
-    [PrimaryKey]
-    public Guid Id { get; set; } = Guid.NewGuid();
+    [PrimaryKey, AutoIncrement]
+    public int Id { get; set; }
     
     [Required]
     // [StringLength(16, ErrorMessage = "Identifier too long (16 character limit).")]
