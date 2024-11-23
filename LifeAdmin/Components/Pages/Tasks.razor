@@ -32,6 +32,7 @@
     <tr>
         <th>Description</th>
         <th>Completed</th>
+        <th>Delete</th>
     </tr>
     </thead>
     <tbody>
@@ -40,6 +41,7 @@
         <tr>
             <td>@task.Description</td>
             <td>@task.CompletionDate.ToShortDateString()</td>
+            <td><a @onclick="@(e => DeleteAsync(@task.Id))">X</a></td>
         </tr>
     }
     </tbody>
@@ -62,12 +64,11 @@
         try
         {
             TaskList = await Database.GetTasksAsync();
-            LogMessages += "Database queried\n";
         }
         catch (Exception ex)
         {
             LogMessages += $"{ex.Message} - {ex.InnerException?.Message}\n";
-            Logger.LogError(ex, "Unable to read from database");
+            Logger.LogError(ex, "Unable to read from database\n");
         }
     }
 
@@ -89,6 +90,26 @@
             {
                 LogMessages += $"{ex.Message} - {ex.InnerException?.Message}\n";
                 Logger.LogError(ex, "Error writing to database");
+            }
+        }
+    }
+
+    private async Task DeleteAsync(int id)
+    {
+        var task = TaskList.Find(i => i.Id == id);
+        if (task is not null)
+        {
+            TaskList.Remove(task);
+            try
+            {
+                var deleted = await Database.DeleteItemAsync(task);
+                LogMessages += $"{deleted} rows deleted\n";
+                Logger.LogInformation("{UpsertCount} records deleted", deleted);
+            }
+            catch (Exception ex)
+            {
+                LogMessages += $"{ex.Message} - {ex.InnerException?.Message}\n";
+                Logger.LogError(ex, "Error deleting from database");
             }
         }
     }
